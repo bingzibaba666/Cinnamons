@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+    <html>
+
+    <head>
+      <meta charset="utf-8"  >
+      <title>table模块快速使用</title>
+      {% load static %}
+      <link rel="stylesheet" href="{%static 'resource/layui/css/layui.css'%}" media="all">
+    </head>
+
+<body>
+  {% load static %}
+  <script src="{%static 'resource/layui/layui.js'%}"></script>
+
+  <!--  detail-->
+  <div class="layui-row" id="EditUser" style="display:none;">
+    <div class="layui-col-md10">
+      <form class="layui-form layui-from-pane" id="updateUser" style="margin-top:20px">
+
+        <input type="hidden" name="pk" id="pk">
+        <!-- <input type="hidden" name="id" id="id">
+        <input type="hidden" name="isforbid" id="isforbid">
+        <input type="hidden" name="isable" id="isable">
+        <input type="hidden" name="rtime" id="rtime"> -->
+        <div class="layui-form-item">
+          <label class="layui-form-label">title</label>
+          <div class="layui-input-block">
+            <input type="text" name="title" id="title" required lay-verify="required" autocomplete="off" placeholder="请输入title" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">price</label>
+          <div class="layui-input-block">
+            <input type="text" name="price" id="price" required lay-verify="required" autocomplete="off" placeholder="请输入price" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">type</label>
+          <div class="layui-input-block">
+            <input type="text" name="type" id="type" required lay-verify="required" autocomplete="off" placeholder="请输入type" class="layui-input">
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+          <label class="layui-form-label">body</label>
+          <div class="layui-input-block">
+            <input type="text" name="body" id="body" required lay-verify="required" autocomplete="off" placeholder="请输入body" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">preview</label>
+          <div class="layui-input-block">
+            <input type="text" name="preview" id="preview" required lay-verify="required" autocomplete="off" placeholder="请输入preview" class="layui-input">
+          </div>
+        </div>
+
+
+        <!-- <div class="layui-form-item" id="showImg">
+                <label class="layui-form-label">头像</label>
+                <div class="layui-input-block">
+                    <img class="layui-upload-img"  id="imgshow" src="" style="width:100px;height:100px;" >
+                </div>
+            </div> -->
+
+
+        <!-- <div  class="layui-upload"  id="updateImg">
+                <button type="button"  class="layui-btn layui-btn-primary" id="img" style="margin-top: 30px;margin-left: 10px">修改头像</button>
+                <div class="layui-upload-list" style="margin-left: 120px;margin-top: -50px"  >
+                    <img class="layui-upload-img" id="demo1" src="" style="width:100px;height:100px;" >
+                    <p id="demoText"></p>
+                </div>
+            </div> -->
+
+        <!-- <input type="hidden" name="headimg" id="headimg" value="" > -->
+
+
+        <div class="layui-form-item">
+          <label class="layui-form-label">url</label>
+          <div class="layui-input-block">
+            <input type="text" name="url" id="url" required lay-verify="required" autocomplete="off" placeholder="请输入url" class="layui-input">
+          </div>
+        </div>
+
+        <!-- <div class="layui-form-item">
+                <label class="layui-form-label">popular</label>
+                <div class="layui-input-block">
+                    <input type="text" name="popular" id="popular" required  lay-verify="required" autocomplete="off" placeholder="请输入popular" class="layui-input">
+                </div>
+            </div> -->
+
+        <div class="layui-form-item" style="margin-top:40px" id="check">
+          <div class="layui-input-block">
+            <button class="layui-btn  layui-btn-submit " lay-submit="" lay-filter="formDemo">确认修改</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!--  表格主体-->
+  <table id="demo" lay-filter="test" lay-skin="nob"></table>
+
+
+
+
+
+
+  <script>
+    layui.use(['table', 'layer', 'form'], function() {
+      var table = layui.table;
+      var $ = layui.$;
+      var layer = layui.layer;
+      var form = layui.form;
+
+      //第一个实例
+      table.render({
+
+        elem: '#demo',
+        height: 850,
+        url: '/cntool/api/getheaders' //数据接口
+          ,
+        page: true //开启分页
+          ,
+        limit: 22,
+        cols: [
+          [ //表头
+            {
+              field: 'pk',
+              title: 'pk',
+              width: 80,
+              sort: true,
+              fixed: 'left'
+            },
+            {
+              field: 'header',
+              title: 'header',
+              sort: true,
+              fixed: 'left'
+            },
+            {
+              field: 'date',
+              title: 'date',
+              width: 220,
+              sort: true,
+              fixed: 'left'
+            }
+            // ,
+            // {
+            //   title: '操作',
+            //   width: 200,
+            //   toolbar: "#barDemo",
+            //   fixed: 'right'
+            // }
+
+
+          ]
+        ],
+        done: function(data, curr, count) {
+
+          // console.log("data");
+
+          //  console.log(data);
+          //  console.log(count);
+
+          // console.log(data.msg)
+
+        },
+        parseData: function(res) { //将原始数据解析成 table 组件所规定的数据
+          console.log(res);
+          return {
+            "code": 0, //解析接口状态
+            "msg": res.msg, //解析提示文本
+            "count": res.data.total, //解析数据长度
+            "data": res.data.list //解析数据列表
+            //新知识点划重点
+          }
+        }
+
+      });
+      // table.on('tool(test)', function(obj) {
+      //   var data = obj.data;
+      //   console.log(obj);
+      //   if (obj.event === 'del') {
+      //     layer.confirm('确认删除', function(index) {
+      //       $.ajax({
+      //         url: '/wx_bg/delete_coms_byId',
+      //         type: 'POST',
+      //         data: {
+      //           // text: "test",
+      //           pk:data.pk
+      //         },
+      //         success: function(msg) {
+      //           if (1) {
+      //             layer.msg("删除成功", {
+      //               icon: 6
+      //             });
+      //             setTimeout(function() {
+      //               layer.closeAll(); //关闭所有的弹出层
+      //             }, 1000);
+      //
+      //           } else {
+      //             layer.msg("发生错误", {
+      //               icon: 5
+      //             });
+      //             setTimeout(function() {
+      //               layer.closeAll(); //关闭所有的弹出层
+      //             }, 1000);
+      //           }
+      //
+      //         }
+      //       })
+      //
+      //       obj.del();
+      //       layer.close(index);
+      //       console.log(index);
+      //     });
+      //   }
+        // else if (obj.event === 'edit') {
+        //   console.log($);
+        //
+        // }
+        // else if (obj.event === 'detail') {
+        //   console.log(data);
+        //   $("#pk").val(data.pk);
+        //   $("#body").val(data.body);
+        //   $("#popular").val(data.popular);
+        //   $("#preview").val(data.preview);
+        //   $("#price").val(data.price);
+        //   $("#title").val(data.title);
+        //   $("#type").val(data.type);
+        //   $("#url").val(data.url);
+        //
+        //   layer.open({
+        //     type: 1,
+        //     title: "查看个人信息",
+        //     area: ['520px', '540px'],
+        //     content: $("#EditUser")
+        //   });
+        // }
+
+
+      // });
+
+      //
+      // form.on('submit(formDemo)', function(data) {
+      //   console.log("form on formDemo");
+      //   console.log(data);
+      //   //数据在data对象中的field里，与table中的存在方式一样；
+      //   var data_json = JSON.stringify(data.field);
+      //   $.ajax({
+      //     url: '/wx_bg/update_coms',
+      //     type: 'POST',
+      //     data: {
+      //       text: "form on formDemo",
+      //       commodity: data_json
+      //     },
+      //     success: function(msg) {
+      //
+      //       console.log("form on formDemo ==msg");
+      //       console.log(msg);
+      //       // if (1) {
+      //       //   layui.msg("修改成功",{
+      //       //     icon:6
+      //       //   });
+      //       //   setTimeout(function() {
+      //       //     layer.closeAll(); //关闭所有的弹出层
+      //       //   }, 1000);
+      //       // } else {
+      //       //   layui.msg("修改失败",{
+      //       //     icon:5
+      //       //   })
+      //       // }
+      //     }
+      //   })
+      //
+      //
+      // });
+
+
+
+    });
+  </script>
+</body>
+
+</html>
