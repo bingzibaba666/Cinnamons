@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+
+<head>
+  <meta charset="utf-8"> {% load static %}
+  <link rel="stylesheet" href="{%static 'resource/layui/css/layui.css'%}">
+</head>
+
+<body style="height: 100%; margin: 0">
+  <!-- <div id="count_order_coms" style="width:50%;height: 50%"></div>
+<div id="count_shopcar_coms" style="width:50%;height: 50%"></div>
+<div id="count_order_flavor" style="width:50%;height: 50%"></div> -->
+
+
+
+
+  <!-- <fieldset class="layui-elem-field layui-field-title">
+    <legend>流体容器（宽度自适应，不固定）</legend>
+  </fieldset> -->
+
+
+      <div id="count_order_coms" style="min-width:50%;height: 50%"></div>
+
+<div id="count_shopcar_coms" style="min-width:50%;;height: 50%"></div>
+
+
+<div id="count_order_flavor" style="min-width:50%;;height: 50%"></div>
+
+
+
+
+
+
+
+    <script type="text/javascript" src="{% static 'resource/js/echarts.js'%}"></script>
+    <script src="{% static 'resource/layui/layui.js'%}"></script>
+    <script type="text/javascript">
+      layui.use('jquery', function() {
+        var data;
+        var $ = layui.jquery;
+        $.ajax({
+          url: 'count_order_coms',
+          async: false,
+          success: function(res) {
+
+            data = res.data;
+          }
+
+        })
+        console.log(data);
+        var dom = document.getElementById("count_order_coms");
+        var myChart = echarts.init(dom);
+        var app = {};
+        option = {
+          title: {
+            text: '商品被购买次数统计',
+            x: 'center',
+            y: 'top'
+
+          },
+          color: ['#3398DB'],
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: { // 坐标轴指示器，坐标轴触发有效
+              type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+            }
+          },
+          grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+          },
+          xAxis: [{
+            type: 'category',
+            data: data.key,
+            axisTick: {
+              alignWithLabel: true
+            },
+            axisLabel: {
+              interval: 0, //设置这里
+              rotate: 40
+            }
+          }],
+          yAxis: [{
+            type: 'value'
+          }],
+          series: [{
+            name: '直接访问',
+            type: 'bar',
+            barWidth: '60%',
+            data: data.value
+          }],
+
+
+        };
+
+
+        if (option && typeof option === "object") {
+          myChart.setOption(option, true);
+        }
+
+
+      });
+
+      // count_shopcar_coms
+      layui.use('jquery', function() {
+        var data;
+        var $ = layui.jquery;
+        $.ajax({
+          url: 'count_shopcar_coms',
+          async: false,
+          success: function(res) {
+
+            data = res.data;
+          }
+
+        })
+        console.log(data);
+        var dom = document.getElementById("count_shopcar_coms");
+        var myChart = echarts.init(dom);
+        var app = {};
+        option = {
+          title: {
+            text: '商品被加入购物车次数统计',
+            x: 'center',
+            y: 'top'
+
+          },
+          color: ['#FFBBFF'],
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: { // 坐标轴指示器，坐标轴触发有效
+              type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+            }
+          },
+          grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+          },
+          xAxis: [{
+            type: 'category',
+            data: data.key,
+            axisTick: {
+              alignWithLabel: true
+            },
+            axisLabel: {
+              interval: 0, //设置这里
+              rotate: 40
+
+            }
+          }],
+          yAxis: [{
+            type: 'value'
+          }],
+          series: [{
+            name: '直接访问',
+            type: 'bar',
+            barWidth: '60%',
+            data: data.value
+          }]
+        };
+
+
+        if (option && typeof option === "object") {
+          myChart.setOption(option, true);
+        }
+
+
+      });
+
+
+      layui.use('jquery', function() {
+        var data;
+        var $ = layui.jquery;
+        $.ajax({
+          url: 'count_order_flavor',
+          async: false,
+          success: function(res) {
+
+            data = res.data;
+          }
+
+        })
+        console.log(data);
+        var dom = document.getElementById("count_order_flavor");
+        var myChart = echarts.init(dom);
+
+
+        option = {
+          title: {
+            text: '各订单商品口味统计',
+            subtext: '',
+            x: 'center',
+            y: '-5'
+          },
+          tooltip: {
+            trigger: 'item',
+            backgroundColor: 'rgba(0,0,250,0.2)'
+          },
+          legend: {
+            type: 'scroll',
+            bottom: 10,
+            data: data.legend
+          },
+          visualMap: {
+            top: 'middle',
+            right: 10,
+            color: ['#f15b6c', '#4e72b8'],
+            calculable: true
+          },
+          radar: {
+            indicator: (function() {
+              var list = [];
+              for (var i = 0; i < data.indicator.length; i++) {
+                list.push({
+                  text: data.indicator[i],
+                  max: 40
+                });
+              }
+
+              return list;
+            })()
+
+            // { text: 'IE8-', max: 400},
+            // { text: 'IE9+', max: 400},
+            // { text: 'Safari', max: 400},
+            // { text: 'Firefox', max: 400},
+            // { text: 'Chrome', max: 400}
+
+          },
+          series: (function() {
+            var series = [];
+            for (var i = 0; i < data.values.length; i++) {
+              console.log(data.legend[i]);
+              series.push({
+                name: '浏览器（数据纯属虚构）',
+                type: 'radar',
+                symbol: 'none',
+                lineStyle: {
+                  width: 1
+                },
+                emphasis: {
+                  areaStyle: {
+                    color: 'rgba(0,250,0,0.3)'
+                  }
+                },
+                data: [{
+                  value: data.values[i],
+                  name: data.legend[i]
+                }]
+              });
+            }
+            return series;
+          })()
+        };
+
+
+        if (option && typeof option === "object") {
+          myChart.setOption(option, true);
+        }
+
+
+      });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,122 @@
+import httpStorage.HttpStorage as http
+import json
+import  basefile
+import pymysql
+from bs4 import BeautifulSoup
+import httpStorage.fileWriter as fw
+writer = fw.writer()
+session = http.httpSession()
+conn=pymysql.connect(host="127.0.0.1",port=3306,user="root",passwd="123456",db="hellopopo")
+cursor=conn.cursor()
+
+
+def insert_sql():
+    import  random
+    import json
+
+
+
+    soup=session.get_htmlSoup(
+        url="https://www.starbucks.com.cn/assets/search/menu-source-zh.json"
+    )
+
+    data_json=json.loads(str(soup))
+    datas=[]
+    col=[]
+    for json in data_json:
+        colums=[]
+        values=[]
+        for item in data_json[json]:
+            colums.append(item)
+            values.append(data_json[json][item])
+        col=colums
+
+
+        sql = "insert into commodity (title,body,comid,preview,url,popular,type,price) values('%s','%s', '%s','%s','%s','%s','%s','%f')" % (values[0], values[1],values[2],values[3],values[4],values[5],values[2].split("/")[2],float(random.randint(25, 60)))
+        print(sql)
+        cursor.execute(sql)
+        conn.commit()
+
+def insert_type():
+    import json
+
+    soup = session.get_htmlSoup(
+        url="https://www.starbucks.com.cn/assets/search/menu-source-zh.json"
+    )
+
+    data_json = json.loads(str(soup))
+    datas = []
+    col = []
+    for json in data_json:
+        colums = []
+        values = []
+        for item in data_json[json]:
+            colums.append(item)
+            values.append(data_json[json][item])
+        col = colums
+        type=values[2].split("/")[2]
+        print(type)
+        # sql = "insert into commodity (title,body,comid,preview,url,popular) values('%s','%s','%s','%s','%s','%s')" % (
+        # values[0], values[1], values[2], values[3], values[4], values[5])
+        sql = "insert into commodity (type) values('%s')" % (type)
+        print(sql)
+        cursor.execute(sql)
+        conn.commit()
+
+def dowload_img():
+    list=writer.csv2list("startbucks/menu")
+    list.pop(0)
+    datas=[]
+    urls=[]
+    for item in list:
+        if item=="":
+            pass
+        else:
+            urls.append(item.split(",")[3])
+    print(urls)
+    print(len(urls))
+
+    base_url="https://www.starbucks.com.cn/"
+    for url in urls:
+        # def makedir(url):
+        import os
+        dir=basefile.get_basepath()+"/Storage/startbucks"
+        for item in url.split("/")[:-1]:
+            dir+=item+"/"
+
+        try:
+            os.makedirs(dir)
+        except Exception:
+            pass
+        # makedir(url)
+        filepath =base_url+url
+        with open(basefile.get_basepath()+"/Storage/startbucks"+url,'wb') as  file:
+            file.write(session.get_img(filepath))
+            print(filepath)
+
+
+# datas = []
+# list = []
+# with open("./Storage/startbucks/menu.txt", "r") as file:
+#     datas = file.readlines()
+# for item in datas:
+#     if item.strip() == "":
+#         pass
+#     else:
+#         list.append(item)
+# print(len(list))
+# print(datas[-1].split())
+# get_menu_csv()
+# list=writer.csv2list("startbucks/commodity2")
+# list.pop(0)
+# datas=[]
+# urls=[]
+# for item in list:
+#     if item=="":
+#         pass
+#     else:
+#         urls.append(item)
+# print(urls)
+# print(len(urls))
+
+insert_sql()
